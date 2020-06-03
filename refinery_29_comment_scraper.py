@@ -1,3 +1,5 @@
+from datetime import datetime
+
 import requests
 import json
 from bs4 import BeautifulSoup
@@ -56,6 +58,23 @@ def parse_refinery29_comments(comments):
     return all_comments_text
 
 
+def create_refinery29_comment_dict(comments):
+    if comments['conversation'] is not None:
+        all_comments = comments['conversation']['comments']
+        all_comments_dict = []
+        for comment in all_comments:
+            comment_dict = {}
+            comment_text = comment['content'][0]['text'].replace("\n", " ")
+            comment_clean = re.sub("<*>", " ", comment_text)
+            comment_dict["comment_text"] = comment_clean
+            comment_dict["user"] = comment["user_id"]
+            comment_dict["up_votes"] = comment["rank"]["ranks_up"]
+            comment_dict["down_votes"] = comment["rank"]["ranks_down"]
+            comment_dict["time_scraped"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+            all_comments_dict.append(comment_dict)
+        return all_comments_dict
+
+
 def write_comments_for_links(links):
     book = xlwt.Workbook()
     sheet = book.add_sheet("Refinery29 Comments")
@@ -66,10 +85,22 @@ def write_comments_for_links(links):
         comments = get_refinery_29_comments(post_id)
         parsed_comments = parse_refinery29_comments(comments)
         for j in range(0, len(parsed_comments)):
-            sheet.write(j+1, i, parsed_comments[j])
-        book.save("data/refinery29_comments.xls")
+            sheet.write(j + 1, i, parsed_comments[j])
+        book.save("refinery29_comments.xls")
+
+
+def create_json_file(links):
+    refinery29_data = {}
+    for i in range(0, len(links)):
+        link = links[i]
+        post_id = get_refinery_29_post_id(link)
+        comments = get_refinery_29_comments(post_id)
+        if comments is not None:
+            refinery29_data[link] = create_refinery29_comment_dict(comments)
+        json_data = json.dumps(refinery29_data, ensure_ascii=False, indent=4)
+        open("data/refinery29_output.json", "w").write(json_data)
 
 
 
 links = get_refinery29_urls()
-write_comments_for_links(links)
+create_json_file(links)
