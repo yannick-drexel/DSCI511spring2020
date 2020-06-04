@@ -23,3 +23,5 @@ for i in range(2,10):
 
             with open('data/money_diaries.csv','a') as file_handler:
                 file_handler.write(domain_link + '\n')
+
+# TO DO: check if the list of urls is unique after runing the script.
