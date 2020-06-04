@@ -45,7 +45,15 @@ def parseMoneyDiari(url_diary):
         str_component = component
         str_value = value
         try:
+            #let's keep the initial data
             data_dict_temp[str_component.strip()] = str_value.strip()
+
+            #parse the $$$ for futher analisys
+            dollar_amounts = re.findall(r"\$[0-9]+,[0-9]+|\$[0-9]+|$[0-9]+,[0-9]+.[0-9]",str_value.strip())
+            if len(dollar_amounts) > 0:
+                value = {}
+                data_dict_temp[str_component.strip() + 'parse $$$'] = dollar_amounts
+
         except TypeError as excpt:
             print(excpt)
             print('could not insert the value in dict for url {}, key {}, value {}'.format(url_diary, component, value))
@@ -58,8 +66,8 @@ def parseMoneyDiari(url_diary):
 # url_diary = 'https://www.refinery29.com/en-us/prairies-canada-911-dispatcher-salary-money-diary'
 # url_diary = 'https://www.refinery29.com/en-us/independent-pr-consultant-toronto-salary-money-diary'
 #url_diary = 'https://www.refinery29.com/en-us/analyst-denver-co-salary-money-diary'
-# # parseMoneyDiari(url_diary)
-#print(parseMoneyDiari(url_diary))
+#parseMoneyDiari(url_diary)
+#pprint(parseMoneyDiari(url_diary))
 
 
 unique_page_list = set()
@@ -78,11 +86,11 @@ for i, url in enumerate(unique_page_list):
     single_page_dict[url] = parseMoneyDiari(url)
     print('urls parsed:', i)
     #single_page_json = json.dump(single_page_dict)
-
+    with open('data/money_diaries.json', 'a') as file_handler:
+        json.dump(dict(single_page_dict), file_handler)
+    single_page_dict = {}
 # import os
 # os.remove("data/money_diaries.json") 
 
-with open('data/money_diaries.json', 'a') as file_handler:
-    json.dump(single_page_dict, file_handler)
-
-
+# with open('data/money_diaries.json', 'a') as file_handler:
+#     json.dump(single_page_dict, file_handler)
