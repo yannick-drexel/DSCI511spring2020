@@ -12,6 +12,9 @@ import praw
 import pandas as pd
 import datetime as dt
 from pprint import pprint
+import json
+
+#pip install praw
 
 reddit = praw.Reddit(client_id='A9UAtvollb2rLg', \
                      client_secret='VXw8b4vjjoA_jybYNpTgNC2mHQE', \
@@ -21,30 +24,28 @@ reddit = praw.Reddit(client_id='A9UAtvollb2rLg', \
 subreddit = reddit.subreddit('MoneyDiariesACTIVE')
 #print(subreddit)
 top_subreddit = subreddit.top(limit=100)
-#print(top_subreddit)
+#dictionary for the data
 topics_dict = {"url":[], "title":[], "id":[], "comments":[], "comments_level1":[], "body":[]}
-for submission in top_subreddit:
-  if '/comments' in submission.url:
-    topics_dict["url"].append(submission.url)
-    topics_dict["title"].append(submission.title)
-    topics_dict["id"].append(submission.id)
-    topics_dict["comments"].append(submission.comments)
-    for comments_level1 in submission.comments:
+for element in top_subreddit:
+  if '/comments' in element.url:
+    topics_dict["url"].append(element.url)
+    topics_dict["title"].append(element.title)
+    topics_dict["id"].append(element.id)
+    topics_dict["comments"].append(element.comments)
+    for comments_level1 in element.comments:
       topics_dict["comments_level1"].append(comments_level1.body + "")
       #print(comments_level1.body)
       break
-    topics_dict["body"].append(submission.selftext)
-print(topics_dict)
-
+    topics_dict["body"].append(element.selftext)
 print(topics_dict)
 
 pprint(topics_dict)
 
-topics_data = pd.DataFrame(topics_dict)
+topics_data = pd.DataFrame.from_dict(topics_dict, orient='index')
+topics_data.transpose()
 
-pprint(topics_data)
+topics_data.to_csv('Subreddit_MoneyDiariesActive.csv', index=False)
 
-def get_date(created):
-    return dt.datetime.fromtimestamp(created)
-
-topics_data.to_csv('FILENAME.csv', index=False)
+df = topics_data.to_json()
+with open('Subreddit_MoneyDiariesActive.json', 'w') as json_file:
+  json.dump(df, json_file)
