@@ -18,19 +18,23 @@ reddit = praw.Reddit(client_id='A9UAtvollb2rLg', \
                      user_agent='ScrapeSubReddit', \
                      username='smpascua', \
                      password='Kanchi123')
-
 subreddit = reddit.subreddit('MoneyDiariesACTIVE')
-
-print(subreddit)
-
+#print(subreddit)
 top_subreddit = subreddit.top(limit=100)
-
-print(top_subreddit)
-
-topics_dict = {"url":[]}
-
+#print(top_subreddit)
+topics_dict = {"url":[], "title":[], "id":[], "comments":[], "comments_level1":[], "body":[]}
 for submission in top_subreddit:
+  if '/comments' in submission.url:
     topics_dict["url"].append(submission.url)
+    topics_dict["title"].append(submission.title)
+    topics_dict["id"].append(submission.id)
+    topics_dict["comments"].append(submission.comments)
+    for comments_level1 in submission.comments:
+      topics_dict["comments_level1"].append(comments_level1.body + "")
+      #print(comments_level1.body)
+      break
+    topics_dict["body"].append(submission.selftext)
+print(topics_dict)
 
 print(topics_dict)
 
