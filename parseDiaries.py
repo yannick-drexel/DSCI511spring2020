@@ -73,31 +73,33 @@ def parseMoneyDiari(url_diary):
 
 # url_diary = 'https://www.refinery29.com/en-us/prairies-canada-911-dispatcher-salary-money-diary'
 # url_diary = 'https://www.refinery29.com/en-us/independent-pr-consultant-toronto-salary-money-diary'
-url_diary = 'https://www.refinery29.com/en-us/analyst-denver-co-salary-money-diary'
+#url_diary = 'https://www.refinery29.com/en-us/analyst-denver-co-salary-money-diary'
 #parseMoneyDiari(url_diary)
-pprint(parseMoneyDiari(url_diary))
+#pprint(parseMoneyDiari(url_diary))
 
 
 # unique_page_list = set()
 # single_page_dict = {}
-
+#
 # with open('data/money_diaries.csv', 'r') as file_handler:
 #     urls = csv.reader(file_handler)
-    
+#
 #     for i, url in enumerate(urls):
 #         #build a unique list of urls
 #         unique_page_list.add(url[0])
-        
+#
 # # parse all the urls
 # print(('urls to be parsed:', len(unique_page_list)))
-# for i, url in enumerate(unique_page_list):
-#     single_page_dict[url] = parseMoneyDiari(url)
-#     print('urls parsed:', i)
-#     #single_page_json = json.dump(single_page_dict)
 
-#     # append the json file with each page
-#     with open('data/money_diaries.json', 'a') as file_handler:
-#         json.dump(dict(single_page_dict), file_handler)
-    
-#     #reset the dict
-#     single_page_dict = {}
+def write_refinery29_post_data(urls):
+    single_page_dict = {}
+    for url in urls:
+        single_page_dict[url] = parseMoneyDiari(url)
+        #print('urls parsed:', i)
+        #single_page_json = json.dump(single_page_dict)
+
+        # append the json file with each page
+    with open('data/money_diaries.json', 'a') as file_handler:
+        json.dump(dict(single_page_dict), file_handler)
+
+
