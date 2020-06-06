@@ -25,19 +25,27 @@ def parseMoneyDiari(url_diary):
 
 
     divs_standard_stories = page.find('body').find_all('div',{'class':'section-container section-text-container'})
-
+    # iterator for daily expense data
+    i = 1
     for divs in divs_standard_stories:
         
         divs_section_text = divs.find_all('div', {'class' : 'section-text'})
-        
-
         for div in divs_section_text:
+            
             for data in div.find_all(re.compile('^strong|[a-zA-Z0-9\$]$')):
+                
                 if data.name == 'strong':
                     #clean up the result to get only what we can use as data
                     if (re.search('[a-zA-Z0-9!]', data.name) and data.nextSibling  is not None ) and (re.search('[a-zA-Z0-9!]', data.name) and data.nextSibling.string is not None):
                         data_dict[data.text] = data.next_sibling
-    
+                    try:    
+                        if (re.search('[Daily Total:] \$[a-zA-Z0-9!]+', data.next)):
+                            search_obj = re.findall("\$[0-9]+,[0-9]+|\$[0-9]+|$[0-9]+,[0-9]+.[0-9]", data.next)
+                            #search_obj = re.match("^\$[0-9]+", data.next)
+                            data_dict['Day ' + str(i)] = search_obj[0]
+                            i += 1
+                    except TypeError as excpt:
+                        print(excpt)
     # now let's do some clean up
     data_dict_temp = defaultdict()
     
@@ -65,32 +73,31 @@ def parseMoneyDiari(url_diary):
 
 # url_diary = 'https://www.refinery29.com/en-us/prairies-canada-911-dispatcher-salary-money-diary'
 # url_diary = 'https://www.refinery29.com/en-us/independent-pr-consultant-toronto-salary-money-diary'
-#url_diary = 'https://www.refinery29.com/en-us/analyst-denver-co-salary-money-diary'
+url_diary = 'https://www.refinery29.com/en-us/analyst-denver-co-salary-money-diary'
 #parseMoneyDiari(url_diary)
-#pprint(parseMoneyDiari(url_diary))
+pprint(parseMoneyDiari(url_diary))
 
 
-unique_page_list = set()
-single_page_dict = {}
+# unique_page_list = set()
+# single_page_dict = {}
 
-with open('data/money_diaries.csv', 'r') as file_handler:
-    urls = csv.reader(file_handler)
+# with open('data/money_diaries.csv', 'r') as file_handler:
+#     urls = csv.reader(file_handler)
     
-    for i, url in enumerate(urls):
-        #build a unique list of urls
-        unique_page_list.add(url[0])
+#     for i, url in enumerate(urls):
+#         #build a unique list of urls
+#         unique_page_list.add(url[0])
         
-# parse all the urls
-print(('urls to be parsed:', len(unique_page_list)))
-for i, url in enumerate(unique_page_list):
-    single_page_dict[url] = parseMoneyDiari(url)
-    print('urls parsed:', i)
-    #single_page_json = json.dump(single_page_dict)
-    with open('data/money_diaries.json', 'a') as file_handler:
-        json.dump(dict(single_page_dict), file_handler)
-    single_page_dict = {}
-# import os
-# os.remove("data/money_diaries.json") 
+# # parse all the urls
+# print(('urls to be parsed:', len(unique_page_list)))
+# for i, url in enumerate(unique_page_list):
+#     single_page_dict[url] = parseMoneyDiari(url)
+#     print('urls parsed:', i)
+#     #single_page_json = json.dump(single_page_dict)
 
-# with open('data/money_diaries.json', 'a') as file_handler:
-#     json.dump(single_page_dict, file_handler)
+#     # append the json file with each page
+#     with open('data/money_diaries.json', 'a') as file_handler:
+#         json.dump(dict(single_page_dict), file_handler)
+    
+#     #reset the dict
+#     single_page_dict = {}
