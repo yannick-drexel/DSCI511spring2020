@@ -5,7 +5,6 @@ import json
 from bs4 import BeautifulSoup
 import urllib
 import re
-import xlwt
 
 
 def get_refinery29_urls():
@@ -30,8 +29,10 @@ def get_refinery29_urls():
 def get_refinery_29_post_id(url):
     html_text = urllib.request.urlopen(url).read()
     soup = BeautifulSoup(html_text, 'html.parser')
-    jsonify = json.loads(soup.find_all("div", "ad native-ad")[0]["data-targeting"])
-    return jsonify["entityid"]
+    html_with_ids = soup.find_all("div", "ad native-ad")
+    if html_with_ids is not None and len(html_with_ids) > 0:
+        jsonify = json.loads(html_with_ids[0]["data-targeting"])
+        return jsonify["entityid"]
 
 
 def get_refinery_29_comments(post_id):
@@ -75,32 +76,15 @@ def create_refinery29_comment_dict(comments):
         return all_comments_dict
 
 
-def write_comments_for_links(links):
-    book = xlwt.Workbook()
-    sheet = book.add_sheet("Refinery29 Comments")
-    for i in range(0, len(links)):
-        link = links[i]
-        sheet.write(0, i, link)
-        post_id = get_refinery_29_post_id(link)
-        comments = get_refinery_29_comments(post_id)
-        parsed_comments = parse_refinery29_comments(comments)
-        for j in range(0, len(parsed_comments)):
-            sheet.write(j + 1, i, parsed_comments[j])
-        book.save("refinery29_comments.xls")
-
-
 def create_json_file(links):
     refinery29_data = {}
     for i in range(0, len(links)):
         link = links[i]
         post_id = get_refinery_29_post_id(link)
-        comments = get_refinery_29_comments(post_id)
-        if comments is not None:
-            refinery29_data[link] = create_refinery29_comment_dict(comments)
-        json_data = json.dumps(refinery29_data, ensure_ascii=False, indent=4)
-        open("data/refinery29_output.json", "w").write(json_data)
+        if post_id is not None:
+            comments = get_refinery_29_comments(post_id)
+            if comments is not None:
+                refinery29_data[link] = create_refinery29_comment_dict(comments)
+    json_data = json.dumps(refinery29_data, ensure_ascii=False, indent=4)
+    open("refinery29_comments_output.json", "w").write(json_data)
 
-
-
-links = get_refinery29_urls()
-create_json_file(links)
