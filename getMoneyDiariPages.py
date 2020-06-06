@@ -31,7 +31,7 @@ def get_refinery29_links(max_number):
 
 
 def write_csv_file(links):
-    with open('data/money_diary_urls.csv', 'a') as file_handler:
+    with open('data/money_diary_urls.csv', 'w') as file_handler:
         for link in links:
             file_handler.write(link + '\n')
 
