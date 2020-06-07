@@ -7,7 +7,7 @@ Run_refinery29_data_scraper.py saves the following four files in the data direct
 1. money_diary_urls.csv: This csv file contains a list of the scraped money diary urls.
 2. money_diaries.json: This json file contains data about each money diary post. Each key is a money diary url. Each value contains data about that post.
 3. refinery29_comments_output: This json file contains the refinery29 comments for each money diary post. Each key is a money diary url. Each value contains a list of comment data.
-r. reddit_comments_output: This json file contains the reddit comments for each money diary post. Each key is a money diary url. Each value contains a list of comment data.
+4. reddit_comments_output: This json file contains the reddit comments for each money diary post. Each key is a money diary url. Each value contains a list of comment data.
 
 To run the code, you can use the following command:
 python run_refinery29_data_scraper.py
