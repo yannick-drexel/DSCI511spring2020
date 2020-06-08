@@ -35,6 +35,3 @@ def write_csv_file(links):
         for link in links:
             file_handler.write(link + '\n')
 
-
-
-# TO DO: check if the list of urls is unique after runing the script.
