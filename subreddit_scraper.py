@@ -35,8 +35,7 @@ def get_reddit_comments(urls):
                     comment["user"] = top_level_comment.author.name
                 else:
                     comment["user"] = ""
-                comment["up_votes"] = top_level_comment.ups
-                comment["down_votes"] = top_level_comment.downs
+                comment["score"] = top_level_comment.score
                 comment["time_scraped"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
                 comments.append(comment)
             subreddit_dict[link] = comments
