@@ -1,17 +1,19 @@
 import json
-
+from datetime import datetime
 import praw
 import requests
 from praw.models import MoreComments
-from collections import defaultdict
 
 
 def get_reddit_comments(urls):
-    reddit = praw.Reddit(client_id='A9UAtvollb2rLg', \
-                         client_secret='VXw8b4vjjoA_jybYNpTgNC2mHQE', \
-                         user_agent='ScrapeSubReddit', \
-                         username='smpascua', \
-                         password='Kanchi123')
+
+    #You need to create a Reddit app to run this code. You can create the App here: https://www.reddit.com/prefs/apps.
+    # For more information on the client_id, client_secret and user_agent, see here: https://praw.readthedocs.io/en/latest/getting_started/authentication.html#oauth
+    reddit = praw.Reddit(client_id='PERSONAL_USE_SCRIPT_14_CHARS',
+                         client_secret='SECRET_KEY_27_CHARS ',
+                         user_agent='YOUR_APP_NAME',
+                         username='YOUR_REDDIT_USER_NAME',
+                         password='YOUR_REDDIT_LOGIN_PASSWORD')
 
     # print(Refinery29links)
     subreddit_dict = {}
@@ -25,11 +27,19 @@ def get_reddit_comments(urls):
             submission = reddit.submission(id=post_id)  # use the reddit api to get a post using post_id
             comments = []
             for top_level_comment in submission.comments:  # iteration to read all the comments in submission and assign to top_level_comment
+                comment = {}
                 if isinstance(top_level_comment, MoreComments):  # skipped if the comment undet "more comments"
                     continue  # skip the current iteration and does not skip the loop
-                comments.append(top_level_comment.body)
-            subreddit_dict[link] = {}
-            subreddit_dict[link]["comments"] = comments
+                comment["comment_text"] = top_level_comment.body
+                if top_level_comment.author is not None:
+                    comment["user"] = top_level_comment.author.name
+                else:
+                    comment["user"] = ""
+                comment["up_votes"] = top_level_comment.ups
+                comment["down_votes"] = top_level_comment.downs
+                comment["time_scraped"] = datetime.now().strftime("%m/%d/%Y, %H:%M:%S")
+                comments.append(comment)
+            subreddit_dict[link] = comments
     json_data = json.dumps(subreddit_dict, ensure_ascii=False, indent=4)
     open("data/reddit_comments_output.json", "w").write(json_data)
 
