@@ -9,7 +9,7 @@ Run_refinery29_data_scraper.py saves the following four files in the data direct
 3. refinery29_comments_output: This json file contains the refinery29 comments for each money diary post. Each key is a money diary url. Each value contains a list of comment data.
 4. reddit_comments_output: This json file contains the reddit comments for each money diary post. Each key is a money diary url. Each value contains a list of comment data.
 
-Before running the code, you need to register yourself as a Reddit application and provide your details in the subreddit_scraper.py script starting at line 12. The comments above that line provide links on how to register a Reddit app.
+Before running the code, you need to register yourself as a Reddit application and provide your details in the subreddit_scraper.py script starting at line 12. The comments above that line provide links on how to register a Reddit app. You may also need to create a data directory for the outputs to be saved in.
 
 Onee that is done, you can use the following command to run the code,:
 python run_refinery29_data_scraper.py
