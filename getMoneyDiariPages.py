@@ -5,7 +5,7 @@ import urllib.request
 def get_refinery29_links(max_number):
 
     links = []
-
+    # to be able to generate more than 30 days of data the range function should be increased. 
     for i in range(2, 10):
 
         links = list(set(links))
